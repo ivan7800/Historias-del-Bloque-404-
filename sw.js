@@ -1,0 +1,6 @@
+'use strict';
+const CACHE='historias-bloque-404-v2.4.0';
+const CORE=['./','./index.html','./styles.css','./app.js','./manifest.webmanifest','./assets/icon.svg','./assets/sant-roc-night.webp','./assets/bar-manolo-night.webp','./assets/kitchen-radio-dawn.webp','./assets/witness-room.webp','./assets/visual-atlas.webp','./assets/other-stories-atlas.webp','./assets/melli-kitchen.webp','./assets/warehouse.webp','./assets/chase.webp','./assets/hospital.webp','./assets/workshop-1991.webp','./assets/workshop-1982.webp'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('historias-bloque-404-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==self.location.origin)return;e.respondWith(fetch(e.request).then(r=>{if(r.ok){const c=r.clone();caches.open(CACHE).then(cache=>cache.put(e.request,c))}return r}).catch(()=>caches.match(e.request).then(r=>r||(e.request.mode==='navigate'?caches.match('./index.html'):undefined))))});
